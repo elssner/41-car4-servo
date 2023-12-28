@@ -4,21 +4,22 @@ radio.onReceivedNumber(function (receivedNumber) {
     bit.comment("0 Motor 0..128..255")
     MotorSteuerung(qwiicmotor.getReceivedNumber(NumberFormat.UInt8LE, qwiicmotor.eOffset.z0))
     bit.comment("1 Servo 0..128..255")
-    ServoSteuerung(Math.round(Math.map(qwiicmotor.getReceivedNumber(NumberFormat.UInt8LE, qwiicmotor.eOffset.z1), 0, 255, 45, 135)))
+    ServoSteuerung(Math.round(Math.map(qwiicmotor.getReceivedNumber(NumberFormat.UInt8LE, qwiicmotor.eOffset.z1), 0, 255, 135, 45)))
 })
 function MotorSteuerung (pMotorPower: number) {
     if (!(btConnected)) {
         qwiicmotor.controlRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.eControl.DRIVER_ENABLE, false)
         iMotorPower = 128
-        qwiicmotor.writeRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.qwiicmotor_eRegister(qwiicmotor.eRegister.MA_DRIVE), iMotorPower)
+        qwiicmotor.writeRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.qwiicmotor_eRegister(qwiicmotor.eRegister.MB_DRIVE), iMotorPower)
     } else if (iMotorPower != pMotorPower) {
         bit.comment("connected und nur wenn von Sender empfangener Wert geändert")
         iMotorPower = pMotorPower
+        qwiicmotor.writeRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.qwiicmotor_eRegister(qwiicmotor.eRegister.MB_DRIVE), iMotorPower)
         qwiicmotor.controlRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.eControl.DRIVER_ENABLE, true)
     }
 }
 input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
-    basic.showNumber(Math.round(Math.map(128, 0, 255, 45, 135)))
+    basic.showNumber(Math.round(Math.map(255, 0, 255, 135, 45)))
 })
 function zeigeStatus () {
     lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 4, 7, Math.round(bit.measureInCentimeters(DigitalPin.C16)))
