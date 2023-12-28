@@ -9,7 +9,6 @@ input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
     pins.digitalWritePin(DigitalPin.P0, 1)
 })
 function zeigeStatus () {
-    lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 0, 3, Math.round(grove.measureInCentimeters(DigitalPin.C16)))
     lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 4, 7, Math.round(bit.measureInCentimeters(DigitalPin.C16)))
     lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 1, 0, 12, wattmeter.statuszeile(wattmeter.wattmeter_eADDR(wattmeter.eADDR.Watt_x45), wattmeter.eStatuszeile.v_mA))
 }
