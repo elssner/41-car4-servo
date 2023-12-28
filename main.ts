@@ -1,9 +1,11 @@
 radio.onReceivedNumber(function (receivedNumber) {
     btLaufzeit = input.runningTime()
-    if (bit.between(receivedNumber, 45, 135)) {
+    qwiicmotor.setReceivedNumber(receivedNumber)
+    if (bit.between(qwiicmotor.getReceivedNumber(NumberFormat.UInt8LE, qwiicmotor.eOffset.z1), 45, 135)) {
         bit.comment("Servo")
-        ServoSteuerung(receivedNumber)
+        ServoSteuerung(qwiicmotor.getReceivedNumber(NumberFormat.UInt8LE, qwiicmotor.eOffset.z1))
     }
+    qwiicmotor.writeRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.qwiicmotor_eRegister(qwiicmotor.eRegister.MA_DRIVE), qwiicmotor.getReceivedNumber(NumberFormat.UInt8LE, qwiicmotor.eOffset.z0))
 })
 input.onButtonEvent(Button.A, input.buttonEventClick(), function () {
     pins.digitalWritePin(DigitalPin.P0, 1)
