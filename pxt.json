@@ -4,7 +4,10 @@
     "dependencies": {
         "core": "*",
         "bit": "github:calliope-net/bit#v1.3.0",
-        "radio": "*"
+        "radio": "*",
+        "lcd-16x2": "github:calliope-net/lcd-16x2#v2.0.5",
+        "wattmeter": "github:calliope-net/wattmeter#v2.0.1",
+        "motor": "github:calliope-net/motor#v1.0.2"
     },
     "files": [
         "main.blocks",
