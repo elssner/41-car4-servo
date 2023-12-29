@@ -28,6 +28,22 @@ function zeigeStatus () {
 input.onButtonEvent(Button.B, input.buttonEventClick(), function () {
     pins.digitalWritePin(DigitalPin.P0, 0)
 })
+function i2cSchleife (bConnected: boolean) {
+    if (bConnected && !(btConnected)) {
+        bit.comment("neu connected")
+        btConnected = true
+        qwiicmotor.controlRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.eControl.DRIVER_ENABLE, true)
+    } else if (btConnected && !(bConnected)) {
+        bit.comment("neu disconnected")
+        btConnected = false
+        qwiicmotor.controlRegister(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.eControl.DRIVER_ENABLE, false)
+    }
+    if (btConnected) {
+    	
+    } else {
+        zeigeStatus()
+    }
+}
 function ServoSteuerung (pWinkel: number) {
     if (!(btConnected)) {
         bit.comment("Bluetooth unterbrochen")
@@ -48,25 +64,26 @@ lcd16x2rgb.initLCD(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E))
 wattmeter.reset(wattmeter.wattmeter_eADDR(wattmeter.eADDR.Watt_x45))
 zeigeStatus()
 qwiicmotor.init(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D))
-btConnected = true
+btConnected = false
 btLaufzeit = input.runningTime()
 radio.setGroup(240)
 ServoSteuerung(90)
 loops.everyInterval(500, function () {
     bit.comment("Überwachung Bluetooth")
     if (input.runningTime() - btLaufzeit < 1000) {
-        if (!(btConnected)) {
-            btConnected = true
-            basic.setLedColor(0x00ff00)
-        }
+        bit.comment("Bluetooth ist verbunden")
+        i2cSchleife(true)
+        basic.setLedColor(0x00ff00)
+    } else if (input.runningTime() - btLaufzeit > 60000) {
+        bit.comment("nach 1 Minute ohne Bluetooth Relais aus schalten")
+        pins.digitalWritePin(DigitalPin.P0, 0)
     } else {
-        btConnected = false
+        bit.comment("zwischen 1 Sekunde und 1 Minute ohne Bluetooth: Standby und blau blinken")
+        i2cSchleife(false)
         if (Math.trunc(input.runningTime() / 1000) % 2 == 1) {
             basic.setLedColor(0x0000ff)
         } else {
             basic.turnRgbLedOff()
         }
-        zeigeStatus()
-        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 1, 13, 15, qwiicmotor.getStatus(qwiicmotor.qwiicmotor_eADDR(qwiicmotor.eADDR.Motor_x5D), qwiicmotor.eStatus.ready))
     }
 })
